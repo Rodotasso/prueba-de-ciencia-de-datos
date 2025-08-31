@@ -8,22 +8,32 @@ license: mit
 sdk_version: 1.49.1
 ---
 
-# 📊 AI Data Scientist Agent  
-
-This is an end-to-end AI-powered Data Scientist assistant built with **Streamlit**.  
-
-### Features:
-- 📂 Upload & explore datasets  
-- 🧹 Data cleaning (missing values, duplicates, outliers)  
-- 📈 Data visualization (interactive charts & correlations)  
-- 🤖 Modeling & evaluation (auto ML with best model selection)  
-- 📝 Generate automated PDF reports  
 
 ---
 
-## 🚀 How to Run Locally
-```bash
-git clone https://huggingface.co/spaces/Sanchay3011/ai-data-scientist-agent
-cd ai-data-scientist-agent
-pip install -r requirements.txt
-streamlit run app.py
+
+
+# 🤖 AI Data Scientist Agent
+
+[![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/open-in-hf-spaces-lg.svg)](https://huggingface.co/spaces/Sanchay3011/ai-ds-agent)
+
+An **AI-powered Data Scientist Agent** that helps you:  
+✅ Upload and clean data  
+✅ Visualize insights  
+✅ Train ML models  
+✅ Download automated reports  
+✅ Ask dataset-specific questions  
+
+---
+
+## 🚀 Try It Now
+Click the button above ☝ to launch the app in Hugging Face Spaces.  
+
+---
+
+## ⚡ Powered By
+- Streamlit  
+- LangChain + Groq  
+- Scikit-learn  
+- Pandas / Seaborn / Matplotlib  
+- ReportLab  
