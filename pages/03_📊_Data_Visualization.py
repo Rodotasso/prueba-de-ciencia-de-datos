@@ -17,8 +17,19 @@ if "dataset" not in st.session_state:
 
 df = st.session_state["dataset"]
 
-st.subheader("Data Preview")
-st.write(df.head())
+st.subheader("📊 Dataset Preview")
+st.dataframe(df.head(50))  # Just preview first 50 rows
+
+st.write(f"Showing first 50 rows out of {df.shape[0]} rows.")
+st.download_button(
+    "⬇ Download Full Dataset",
+    df.to_csv(index=False),
+    "dataset.csv",
+    "text/csv"
+)
+
+# Keep your visualization code as is (charts still use full df)
+
 
 # -------------------------
 # Summary Statistics
