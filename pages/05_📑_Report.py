@@ -1,139 +1,518 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.express as px
+import plotly.graph_objects as go
 import io
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet
+from datetime import datetime
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
+from reportlab.lib.units import inch
 
 from chatbot import chatbot_sidebar
 
 st.session_state["page_name"] = "Report"
 
-st.title("📑 Generate Report")
+st.title("📑 Generate Comprehensive Report")
 
 # -------------------------
-# Load dataset from session_state
+# Check dataset
 # -------------------------
-if "dataset" in st.session_state and "uploaded_filename" in st.session_state:
-    df = st.session_state["dataset"]
-    dataset_name = st.session_state["uploaded_filename"].split(".")[0]
+if "dataset" not in st.session_state or "uploaded_filename" not in st.session_state:
+    st.warning("⚠️ Please upload a dataset first.")
+    st.stop()
 
-    def generate_pdf():
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
-        styles = getSampleStyleSheet()
-        elements = []
+df = st.session_state["dataset"]
+dataset_name = st.session_state["uploaded_filename"].split(".")[0]
 
-        # -------------------------
-        # Title
-        # -------------------------
-        elements.append(Paragraph(f"{dataset_name} Report", styles['Title']))
-        elements.append(Spacer(1, 12))
+# -------------------------
+# Report Options
+# -------------------------
+st.subheader("⚙️ Report Configuration")
 
-        # -------------------------
-        # Dataset Overview
-        # -------------------------
-        elements.append(Paragraph("📊 Dataset Overview", styles['Heading2']))
-        elements.append(Paragraph(f"Rows: {df.shape[0]}", styles['Normal']))
-        elements.append(Paragraph(f"Columns: {df.shape[1]}", styles['Normal']))
-        elements.append(Paragraph(f"Missing Values: {df.isnull().sum().sum()}", styles['Normal']))
-        elements.append(Spacer(1, 12))
+col1, col2 = st.columns(2)
 
-        # -------------------------
-        # Descriptive Statistics (Split into chunks so it fits PDF)
-        # -------------------------
-        elements.append(Paragraph("📈 Descriptive Statistics", styles['Heading2']))
+with col1:
+    report_title = st.text_input("Report Title:", value=f"{dataset_name} Analysis Report")
+    include_stats = st.checkbox("Include Descriptive Statistics", value=True)
+    include_correlations = st.checkbox("Include Correlation Analysis", value=True)
 
+with col2:
+    author_name = st.text_input("Author Name:", value="AI Data Scientist")
+    include_distributions = st.checkbox("Include Distribution Plots", value=True)
+    include_model_results = st.checkbox("Include Model Results", value=True)
+
+# -------------------------
+# Preview
+# -------------------------
+st.markdown("---")
+st.subheader("👀 Report Preview")
+
+with st.expander("📊 Dataset Overview", expanded=True):
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Rows", f"{len(df):,}")
+    with col2:
+        st.metric("Columns", len(df.columns))
+    with col3:
+        st.metric("Missing Values", f"{df.isnull().sum().sum():,}")
+    with col4:
+        st.metric("Duplicates", f"{df.duplicated().sum():,}")
+
+if include_stats:
+    with st.expander("📈 Descriptive Statistics"):
+        st.dataframe(df.describe(), use_container_width=True)
+
+if include_correlations:
+    num_cols = df.select_dtypes(include=[np.number]).columns
+    if len(num_cols) > 1:
+        with st.expander("🌡️ Correlation Matrix"):
+            corr = df[num_cols].corr()
+            fig = px.imshow(corr, text_auto='.2f', aspect="auto",
+                          color_continuous_scale='RdBu_r',
+                          title="Correlation Heatmap")
+            st.plotly_chart(fig, use_container_width=True)
+
+if include_model_results and "model_results" in st.session_state:
+    with st.expander("🤖 Model Results"):
+        results_df = pd.DataFrame(st.session_state["model_results"])
+        if st.session_state.get("problem_type") == "classification":
+            st.dataframe(results_df[['Model', 'Accuracy', 'Precision', 'Recall', 'F1-Score']], 
+                        use_container_width=True)
+        else:
+            st.dataframe(results_df[['Model', 'RMSE', 'MAE', 'R² Score']], 
+                        use_container_width=True)
+
+# -------------------------
+# Generate PDF Function
+# -------------------------
+def generate_pdf_report():
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter,
+                          rightMargin=72, leftMargin=72,
+                          topMargin=72, bottomMargin=18)
+    
+    styles = getSampleStyleSheet()
+    elements = []
+    
+    # Custom styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        textColor=colors.HexColor("#2E86C1"),
+        spaceAfter=30,
+        alignment=1  # Center
+    )
+    
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontSize=16,
+        textColor=colors.HexColor("#1F618D"),
+        spaceAfter=12,
+        spaceBefore=12
+    )
+    
+    # -------------------------
+    # Title Page
+    # -------------------------
+    elements.append(Spacer(1, 2*inch))
+    elements.append(Paragraph(report_title, title_style))
+    elements.append(Spacer(1, 0.3*inch))
+    elements.append(Paragraph(f"Generated by: {author_name}", styles['Normal']))
+    elements.append(Paragraph(f"Date: {datetime.now().strftime('%B %d, %Y')}", styles['Normal']))
+    elements.append(Spacer(1, 0.5*inch))
+    elements.append(Paragraph(f"Dataset: {dataset_name}", styles['Normal']))
+    elements.append(PageBreak())
+    
+    # -------------------------
+    # Table of Contents
+    # -------------------------
+    elements.append(Paragraph("Table of Contents", heading_style))
+    toc_items = [
+        "1. Dataset Overview",
+        "2. Descriptive Statistics",
+    ]
+    if include_correlations:
+        toc_items.append("3. Correlation Analysis")
+    if include_distributions:
+        toc_items.append("4. Distribution Analysis")
+    if include_model_results and "model_results" in st.session_state:
+        toc_items.append("5. Model Results")
+    
+    for item in toc_items:
+        elements.append(Paragraph(f"&nbsp;&nbsp;{item}", styles['Normal']))
+    
+    elements.append(PageBreak())
+    
+    # -------------------------
+    # Dataset Overview
+    # -------------------------
+    elements.append(Paragraph("1. Dataset Overview", heading_style))
+    
+    overview_data = [
+        ["Metric", "Value"],
+        ["Total Rows", f"{len(df):,}"],
+        ["Total Columns", f"{len(df.columns)}"],
+        ["Missing Values", f"{df.isnull().sum().sum():,}"],
+        ["Duplicate Rows", f"{df.duplicated().sum():,}"],
+        ["Numeric Columns", f"{len(df.select_dtypes(include=[np.number]).columns)}"],
+        ["Categorical Columns", f"{len(df.select_dtypes(exclude=[np.number]).columns)}"],
+    ]
+    
+    overview_table = Table(overview_data, colWidths=[3*inch, 3*inch])
+    overview_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#3498DB")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.white]),
+    ]))
+    elements.append(overview_table)
+    elements.append(Spacer(1, 20))
+    
+    # Column details
+    elements.append(Paragraph("Column Information", styles['Heading3']))
+    col_data = [["Column Name", "Type", "Non-Null", "Unique"]]
+    
+    for col in df.columns[:20]:  # Limit to first 20 columns
+        col_data.append([
+            str(col)[:30],  # Truncate long names
+            str(df[col].dtype),
+            str(df[col].count()),
+            str(df[col].nunique())
+        ])
+    
+    col_table = Table(col_data, colWidths=[2*inch, 1.5*inch, 1*inch, 1*inch])
+    col_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#E74C3C")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 8),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.white]),
+    ]))
+    elements.append(col_table)
+    elements.append(PageBreak())
+    
+    # -------------------------
+    # Descriptive Statistics
+    # -------------------------
+    if include_stats:
+        elements.append(Paragraph("2. Descriptive Statistics", heading_style))
+        
         stats_df = df.describe().round(2).reset_index()
-
-        # Format numbers with commas + 2 decimals
+        
+        # Format numbers
         def format_value(x):
             if isinstance(x, (int, float)):
                 return f"{x:,.2f}"
             return str(x)
-
+        
         stats_df = stats_df.applymap(format_value)
-
-        chunk_size = 6  # number of columns per table
+        
+        # Split into chunks if too many columns
+        chunk_size = 5
         for start in range(0, stats_df.shape[1], chunk_size):
             subset = stats_df.iloc[:, start:start + chunk_size]
             table_data = [subset.columns.tolist()] + subset.values.tolist()
-
+            
             stats_table = Table(table_data, repeatRows=1)
             style_commands = [
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#4CAF50")),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#27AE60")),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTSIZE', (0, 0), (-1, -1), 7),
                 ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-                ('FONTSIZE', (0, 0), (-1, -1), 7),  # smaller font
             ]
-            # Alternating row background
+            
             for i in range(1, len(table_data)):
-                bg_color = colors.whitesmoke if i % 2 == 0 else colors.lightgrey
+                bg_color = colors.whitesmoke if i % 2 == 0 else colors.white
                 style_commands.append(('BACKGROUND', (0, i), (-1, i), bg_color))
-
+            
             stats_table.setStyle(TableStyle(style_commands))
             elements.append(stats_table)
             elements.append(Spacer(1, 12))
-
-        # -------------------------
-        # Best Model Summary
-        # -------------------------
-        if "best_model" in st.session_state:
-            elements.append(Paragraph("🤖 Best Model Summary", styles['Heading2']))
-            model_table_data = [
-                ["Model", "Score", "Type"],
-                [
-                    st.session_state["best_model_name"],
-                    f"{st.session_state['best_score']:.4f}",
-                    st.session_state["problem_type"]
-                ]
-            ]
-            model_table = Table(model_table_data)
-            model_table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#2196F3")),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ]))
-            elements.append(model_table)
-            elements.append(Spacer(1, 12))
-
-        # -------------------------
-        # Correlation Heatmap (if numeric)
-        # -------------------------
-        num_cols = df.select_dtypes(include=["int64", "float64"]).columns
+        
+        elements.append(PageBreak())
+    
+    # -------------------------
+    # Correlation Analysis
+    # -------------------------
+    if include_correlations:
+        num_cols = df.select_dtypes(include=[np.number]).columns
         if len(num_cols) > 1:
-            fig, ax = plt.subplots(figsize=(5, 4))
-            sns.heatmap(df[num_cols].corr(), annot=True, cmap="coolwarm", ax=ax)
+            elements.append(Paragraph("3. Correlation Analysis", heading_style))
+            
+            # Create correlation heatmap
+            corr = df[num_cols].corr()
+            fig, ax = plt.subplots(figsize=(8, 6))
+            sns.heatmap(corr, annot=True, cmap="coolwarm", center=0, 
+                       fmt='.2f', ax=ax, cbar_kws={'shrink': 0.8})
+            ax.set_title("Correlation Heatmap")
+            
             img_buffer = io.BytesIO()
-            plt.savefig(img_buffer, format='png')
+            plt.savefig(img_buffer, format='png', bbox_inches='tight', dpi=150)
             plt.close(fig)
             img_buffer.seek(0)
-            elements.append(Paragraph("📌 Correlation Heatmap", styles['Heading2']))
-            elements.append(Image(img_buffer, width=400, height=300))
+            
+            elements.append(Image(img_buffer, width=5*inch, height=4*inch))
             elements.append(Spacer(1, 12))
+            
+            # Top correlations
+            elements.append(Paragraph("Top Correlations", styles['Heading3']))
+            mask = np.triu(np.ones_like(corr, dtype=bool), k=1)
+            corr_pairs = corr.where(mask).stack().reset_index()
+            corr_pairs.columns = ['Variable 1', 'Variable 2', 'Correlation']
+            corr_pairs['Abs'] = corr_pairs['Correlation'].abs()
+            top_corr = corr_pairs.nlargest(10, 'Abs')[['Variable 1', 'Variable 2', 'Correlation']]
+            
+            corr_data = [['Variable 1', 'Variable 2', 'Correlation']]
+            for _, row in top_corr.iterrows():
+                corr_data.append([
+                    str(row['Variable 1'])[:30],
+                    str(row['Variable 2'])[:30],
+                    f"{row['Correlation']:.3f}"
+                ])
+            
+            corr_table = Table(corr_data, colWidths=[2*inch, 2*inch, 1.5*inch])
+            corr_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#9B59B6")),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.white]),
+            ]))
+            elements.append(corr_table)
+            elements.append(PageBreak())
+    
+    # -------------------------
+    # Model Results
+    # -------------------------
+    if include_model_results and "model_results" in st.session_state:
+        section_num = 4 if include_correlations else 3
+        elements.append(Paragraph(f"{section_num}. Model Results", heading_style))
+        
+        results = st.session_state["model_results"]
+        problem_type = st.session_state.get("problem_type", "classification")
+        
+        if problem_type == "classification":
+            model_data = [["Model", "Accuracy", "Precision", "Recall", "F1-Score"]]
+            for result in results:
+                model_data.append([
+                    result['Model'],
+                    f"{result['Accuracy']:.4f}",
+                    f"{result['Precision']:.4f}",
+                    f"{result['Recall']:.4f}",
+                    f"{result['F1-Score']:.4f}"
+                ])
+        else:
+            model_data = [["Model", "RMSE", "MAE", "R² Score"]]
+            for result in results:
+                model_data.append([
+                    result['Model'],
+                    f"{result['RMSE']:.2f}",
+                    f"{result['MAE']:.2f}",
+                    f"{result['R² Score']:.4f}"
+                ])
+        
+        model_table = Table(model_data, colWidths=[2*inch] + [1.3*inch]*4)
+        model_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#E67E22")),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.white]),
+        ]))
+        elements.append(model_table)
+        elements.append(Spacer(1, 20))
+        
+        # Best model highlight
+        best_model = st.session_state.get("best_model_name", "N/A")
+        best_score = st.session_state.get("best_score", 0)
+        
+        metric = "Accuracy" if problem_type == "classification" else "R² Score"
+        best_text = f"<b>Best Model:</b> {best_model} with {metric} = {best_score:.4f}"
+        elements.append(Paragraph(best_text, styles['Normal']))
+    
+    # Build PDF
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
 
-        doc.build(elements)
-        buffer.seek(0)
-        return buffer
+# -------------------------
+# Generate HTML Report
+# -------------------------
+def generate_html_report():
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{report_title}</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }}
+            .container {{
+                background: white;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            }}
+            h1 {{
+                color: #2c3e50;
+                border-bottom: 3px solid #3498db;
+                padding-bottom: 10px;
+            }}
+            h2 {{
+                color: #34495e;
+                margin-top: 30px;
+            }}
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }}
+            th {{
+                background-color: #3498db;
+                color: white;
+                padding: 12px;
+                text-align: left;
+            }}
+            td {{
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+            }}
+            tr:hover {{
+                background-color: #f5f5f5;
+            }}
+            .metric {{
+                display: inline-block;
+                background: #ecf0f1;
+                padding: 15px 25px;
+                margin: 10px;
+                border-radius: 5px;
+                font-weight: bold;
+            }}
+            .metric-value {{
+                font-size: 24px;
+                color: #2980b9;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>{report_title}</h1>
+            <p><strong>Generated by:</strong> {author_name}</p>
+            <p><strong>Date:</strong> {datetime.now().strftime('%B %d, %Y %H:%M:%S')}</p>
+            
+            <h2>📊 Dataset Overview</h2>
+            <div>
+                <div class="metric">
+                    <div>Rows</div>
+                    <div class="metric-value">{len(df):,}</div>
+                </div>
+                <div class="metric">
+                    <div>Columns</div>
+                    <div class="metric-value">{len(df.columns)}</div>
+                </div>
+                <div class="metric">
+                    <div>Missing</div>
+                    <div class="metric-value">{df.isnull().sum().sum():,}</div>
+                </div>
+            </div>
+            
+            <h2>📈 Descriptive Statistics</h2>
+            {df.describe().to_html()}
+            
+            <h2>📋 Column Information</h2>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Non-Null</th>
+                    <th>Unique</th>
+                </tr>
+    """
+    
+    for col in df.columns:
+        html_content += f"""
+                <tr>
+                    <td>{col}</td>
+                    <td>{df[col].dtype}</td>
+                    <td>{df[col].count()}</td>
+                    <td>{df[col].nunique()}</td>
+                </tr>
+        """
+    
+    html_content += """
+            </table>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html_content
 
-    pdf_buffer = generate_pdf()
+# -------------------------
+# Download Buttons
+# -------------------------
+st.markdown("---")
+st.subheader("📥 Download Report")
 
-    st.download_button(
-        label="📥 Download Detailed Report (PDF)",
-        data=pdf_buffer,
-        file_name=f"{dataset_name}_report.pdf",
-        mime="application/pdf"
-    )
+col1, col2 = st.columns(2)
 
-else:
-    st.warning("⚠️ Please upload and process a dataset first.")
+with col1:
+    if st.button("📄 Generate PDF Report", use_container_width=True, type="primary"):
+        with st.spinner("🎨 Creating PDF report..."):
+            pdf_buffer = generate_pdf_report()
+            st.download_button(
+                label="📥 Download PDF",
+                data=pdf_buffer,
+                file_name=f"{dataset_name}_report.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+        st.success("✅ PDF ready for download!")
 
-# Chatbot
+with col2:
+    if st.button("🌐 Generate HTML Report", use_container_width=True, type="primary"):
+        with st.spinner("🎨 Creating HTML report..."):
+            html_content = generate_html_report()
+            st.download_button(
+                label="📥 Download HTML",
+                data=html_content,
+                file_name=f"{dataset_name}_report.html",
+                mime="text/html",
+                use_container_width=True
+            )
+        st.success("✅ HTML ready for download!")
+
+# Tips
+st.markdown("---")
+st.info("""
+💡 **Tips:**
+- PDF reports are great for formal presentations and printing
+- HTML reports are interactive and can be viewed in any browser
+- Both formats include comprehensive analysis of your dataset
+- Make sure to complete all analysis steps before generating reports
+""")
+
 chatbot_sidebar()
