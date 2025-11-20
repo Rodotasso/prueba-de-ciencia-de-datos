@@ -35,12 +35,13 @@ with col4:
 st.markdown("---")
 
 # Tabs for different visualizations
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📈 Distribution",
     "🔗 Relationships", 
     "📊 Comparisons",
     "🌡️ Heatmaps",
-    "📉 Advanced"
+    "📉 Advanced",
+    "🏥 Epidemiological"
 ])
 
 with tab1:
@@ -300,6 +301,309 @@ with tab5:
                 st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("Need at least 2 categorical columns for sunburst")
+
+with tab6:
+    st.subheader("🏥 Epidemiological Visualizations")
+    
+    epi_viz = st.selectbox("Select epidemiological visualization:", [
+        "Population Pyramid",
+        "Age-Adjusted Rates",
+        "Incidence/Prevalence Trends",
+        "Survival Curve",
+        "Geographical Heat Map",
+        "2x2 Contingency Analysis"
+    ])
+    
+    if epi_viz == "Population Pyramid":
+        st.info("**Population Pyramid**: Visualize age and sex distribution of a population")
+        
+        age_col = st.selectbox("Age column:", df.columns, key="pyram_age")
+        sex_col = st.selectbox("Sex/Gender column:", df.columns, key="pyram_sex")
+        
+        if st.button("Generate Pyramid"):
+            try:
+                # Group by age and sex
+                pyramid_data = df.groupby([age_col, sex_col]).size().reset_index(name='count')
+                
+                # Create pyramid
+                fig = go.Figure()
+                
+                for sex in pyramid_data[sex_col].unique():
+                    sex_data = pyramid_data[pyramid_data[sex_col] == sex]
+                    values = sex_data['count'].values
+                    
+                    # Make one side negative for pyramid effect
+                    if sex == pyramid_data[sex_col].unique()[0]:
+                        values = -values
+                    
+                    fig.add_trace(go.Bar(
+                        y=sex_data[age_col],
+                        x=values,
+                        name=str(sex),
+                        orientation='h'
+                    ))
+                
+                fig.update_layout(
+                    title="Population Pyramid",
+                    barmode='overlay',
+                    bargap=0.1,
+                    xaxis=dict(title='Population'),
+                    yaxis=dict(title='Age'),
+                    height=600
+                )
+                
+                st.plotly_chart(fig, use_container_width=True)
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
+    
+    elif epi_viz == "Age-Adjusted Rates":
+        st.info("**Age-Adjusted Rates**: Standardize rates across different age groups")
+        
+        age_col = st.selectbox("Age group column:", df.columns, key="age_adj_age")
+        rate_col = st.selectbox("Rate/Count column:", num_cols, key="age_adj_rate")
+        pop_col = st.selectbox("Population column:", num_cols, key="age_adj_pop")
+        
+        if st.button("Calculate Age-Adjusted Rate"):
+            try:
+                # Calculate crude rates per age group
+                rates = df.groupby(age_col).apply(
+                    lambda x: (x[rate_col].sum() / x[pop_col].sum()) * 100000
+                ).reset_index(name='crude_rate')
+                
+                fig = px.bar(rates, x=age_col, y='crude_rate',
+                           title="Age-Specific Rates (per 100,000)",
+                           labels={'crude_rate': 'Rate per 100,000'})
+                
+                st.plotly_chart(fig, use_container_width=True)
+                
+                # Display table
+                st.dataframe(rates.style.format({'crude_rate': '{:.2f}'}),
+                           use_container_width=True)
+                
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
+    
+    elif epi_viz == "Incidence/Prevalence Trends":
+        st.info("**Disease Trends**: Visualize temporal patterns of disease occurrence")
+        
+        date_col = st.selectbox("Date column:", df.columns, key="trend_date")
+        case_col = st.selectbox("Case count column (optional):", ["Count rows"] + num_cols, key="trend_cases")
+        
+        time_unit = st.radio("Aggregate by:", ["Day", "Week", "Month", "Year"], horizontal=True)
+        
+        if st.button("Generate Trend"):
+            try:
+                df_trend = df.copy()
+                df_trend[date_col] = pd.to_datetime(df_trend[date_col])
+                
+                # Aggregate by time unit
+                if time_unit == "Day":
+                    df_trend['period'] = df_trend[date_col].dt.date
+                elif time_unit == "Week":
+                    df_trend['period'] = df_trend[date_col].dt.to_period('W').apply(lambda r: r.start_time)
+                elif time_unit == "Month":
+                    df_trend['period'] = df_trend[date_col].dt.to_period('M').apply(lambda r: r.start_time)
+                else:  # Year
+                    df_trend['period'] = df_trend[date_col].dt.year
+                
+                if case_col == "Count rows":
+                    trend_data = df_trend.groupby('period').size().reset_index(name='cases')
+                else:
+                    trend_data = df_trend.groupby('period')[case_col].sum().reset_index(name='cases')
+                
+                fig = go.Figure()
+                
+                # Add line chart
+                fig.add_trace(go.Scatter(
+                    x=trend_data['period'],
+                    y=trend_data['cases'],
+                    mode='lines+markers',
+                    name='Cases',
+                    line=dict(width=2, color='red')
+                ))
+                
+                # Add moving average
+                if len(trend_data) > 7:
+                    trend_data['ma7'] = trend_data['cases'].rolling(window=7, center=True).mean()
+                    fig.add_trace(go.Scatter(
+                        x=trend_data['period'],
+                        y=trend_data['ma7'],
+                        mode='lines',
+                        name='7-period MA',
+                        line=dict(width=3, dash='dash', color='blue')
+                    ))
+                
+                fig.update_layout(
+                    title=f"Disease Incidence Trend by {time_unit}",
+                    xaxis_title="Time Period",
+                    yaxis_title="Number of Cases",
+                    hovermode='x unified'
+                )
+                
+                st.plotly_chart(fig, use_container_width=True)
+                
+                # Summary stats
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Total Cases", f"{trend_data['cases'].sum():.0f}")
+                with col2:
+                    st.metric("Peak Cases", f"{trend_data['cases'].max():.0f}")
+                with col3:
+                    st.metric("Average per Period", f"{trend_data['cases'].mean():.1f}")
+                
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
+    
+    elif epi_viz == "Survival Curve":
+        st.info("**Kaplan-Meier Survival**: Visualize survival probability over time")
+        
+        time_col = st.selectbox("Time-to-event column:", num_cols, key="surv_time")
+        event_col = st.selectbox("Event indicator (1=event, 0=censored):", df.columns, key="surv_event")
+        group_col = st.selectbox("Group by (optional):", ["None"] + cat_cols, key="surv_group")
+        
+        if st.button("Generate Survival Curve"):
+            try:
+                from lifelines import KaplanMeierFitter
+                
+                kmf = KaplanMeierFitter()
+                fig = go.Figure()
+                
+                if group_col != "None":
+                    for group in df[group_col].unique():
+                        mask = df[group_col] == group
+                        kmf.fit(df.loc[mask, time_col], 
+                               df.loc[mask, event_col],
+                               label=str(group))
+                        
+                        fig.add_trace(go.Scatter(
+                            x=kmf.survival_function_.index,
+                            y=kmf.survival_function_[str(group)],
+                            mode='lines',
+                            name=f'{group}',
+                            line=dict(width=2)
+                        ))
+                else:
+                    kmf.fit(df[time_col], df[event_col])
+                    
+                    fig.add_trace(go.Scatter(
+                        x=kmf.survival_function_.index,
+                        y=kmf.survival_function_['KM_estimate'],
+                        mode='lines',
+                        name='Survival',
+                        line=dict(width=2, color='blue')
+                    ))
+                
+                fig.update_layout(
+                    title="Kaplan-Meier Survival Curve",
+                    xaxis_title="Time",
+                    yaxis_title="Survival Probability",
+                    yaxis_range=[0, 1]
+                )
+                
+                st.plotly_chart(fig, use_container_width=True)
+                
+                st.success(f"Median survival time: {kmf.median_survival_time_:.2f}")
+                
+            except ImportError:
+                st.error("❌ Install 'lifelines' package: pip install lifelines")
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
+    
+    elif epi_viz == "Geographical Heat Map":
+        st.info("**Geographic Distribution**: Map disease prevalence or incidence by region")
+        
+        region_col = st.selectbox("Region/Location column:", df.columns, key="geo_region")
+        value_col = st.selectbox("Value to map:", num_cols, key="geo_value")
+        
+        agg_func = st.radio("Aggregation:", ["Sum", "Mean", "Count"], horizontal=True)
+        
+        if st.button("Generate Heat Map"):
+            try:
+                if agg_func == "Sum":
+                    geo_data = df.groupby(region_col)[value_col].sum().reset_index()
+                elif agg_func == "Mean":
+                    geo_data = df.groupby(region_col)[value_col].mean().reset_index()
+                else:  # Count
+                    geo_data = df.groupby(region_col).size().reset_index(name=value_col)
+                
+                fig = px.bar(geo_data, x=region_col, y=value_col,
+                           title=f"{agg_func} of {value_col} by {region_col}",
+                           color=value_col,
+                           color_continuous_scale='Reds')
+                
+                fig.update_layout(xaxis={'categoryorder':'total descending'})
+                
+                st.plotly_chart(fig, use_container_width=True)
+                
+                # Show high-risk areas
+                top_5 = geo_data.nlargest(5, value_col)
+                st.markdown("##### 🔴 Top 5 High-Risk Areas")
+                st.dataframe(top_5, use_container_width=True)
+                
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
+    
+    elif epi_viz == "2x2 Contingency Analysis":
+        st.info("**2x2 Table**: Analyze association between exposure and outcome")
+        
+        exposure_col = st.selectbox("Exposure variable (binary):", df.columns, key="cont_exp")
+        outcome_col = st.selectbox("Outcome variable (binary):", df.columns, key="cont_out")
+        
+        if st.button("Analyze Association"):
+            try:
+                from scipy import stats
+                
+                # Create contingency table
+                cont_table = pd.crosstab(df[exposure_col], df[outcome_col])
+                
+                st.markdown("##### 📋 Contingency Table")
+                st.dataframe(cont_table, use_container_width=True)
+                
+                if cont_table.shape == (2, 2):
+                    a = cont_table.iloc[1, 1]  # Exposed + Diseased
+                    b = cont_table.iloc[1, 0]  # Exposed + Not diseased
+                    c = cont_table.iloc[0, 1]  # Unexposed + Diseased
+                    d = cont_table.iloc[0, 0]  # Unexposed + Not diseased
+                    
+                    # Calculate measures
+                    risk_exposed = a / (a + b)
+                    risk_unexposed = c / (c + d)
+                    risk_ratio = risk_exposed / risk_unexposed
+                    odds_ratio = (a * d) / (b * c)
+                    
+                    # Chi-square test
+                    chi2, p_value, dof, expected = stats.chi2_contingency(cont_table)
+                    
+                    # Display results
+                    col1, col2, col3 = st.columns(3)
+                    
+                    with col1:
+                        st.metric("Risk Ratio", f"{risk_ratio:.3f}")
+                        st.caption("RR > 1: Increased risk")
+                    
+                    with col2:
+                        st.metric("Odds Ratio", f"{odds_ratio:.3f}")
+                        st.caption("OR > 1: Increased odds")
+                    
+                    with col3:
+                        st.metric("Chi² p-value", f"{p_value:.4f}")
+                        if p_value < 0.05:
+                            st.caption("✓ Significant")
+                        else:
+                            st.caption("Not significant")
+                    
+                    # Visualization
+                    fig = px.imshow(cont_table, text_auto=True, aspect="auto",
+                                  labels=dict(x=outcome_col, y=exposure_col),
+                                  title="Contingency Table Heatmap",
+                                  color_continuous_scale='Blues')
+                    st.plotly_chart(fig, use_container_width=True)
+                    
+                else:
+                    st.warning("⚠️ Variables must be binary (2 categories each)")
+                
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
 
 # Data preview
 st.markdown("---")

@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="AI Data Science Agent", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="AI Epidemiology & Public Health Agent", page_icon="🏥", layout="wide")
 
 # ===== CSS =====
 st.markdown("""
@@ -82,36 +82,41 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ===== Title =====
-st.markdown("<h1 class='main-title'>🚀 AI Data Science Agent</h1>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>Your end-to-end assistant for Data Cleaning, Analysis, Modeling, and Reporting 📊</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='main-title'>🏥 AI Epidemiology & Public Health Agent</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Advanced Biostatistical Analysis & Epidemiological Modeling for Doctoral Research 📊</p>", unsafe_allow_html=True)
 
 # ===== Cards =====
 cards_html = """
 <div class="cards-container">
     <a href="?page=01_📂_Upload_and_Schema" class="card">
         <div class="card-icon">📂</div>
-        <div class="card-title">Step-1: Upload & Schema</div>
-        <div class="card-desc">Upload your dataset & explore its structure</div>
+        <div class="card-title">Step-1: Upload Data</div>
+        <div class="card-desc">Load epidemiological datasets (CSV, Excel, JSON, Parquet)</div>
     </a>
     <a href="?page=02_🧹_Clean_Data" class="card">
         <div class="card-icon">🧹</div>
-        <div class="card-title">Step-2: Clean Data</div>
-        <div class="card-desc">Handle missing values, duplicates & outliers</div>
+        <div class="card-title">Step-2: Data Cleaning</div>
+        <div class="card-desc">Handle missing values, outliers & data quality issues</div>
     </a>
     <a href="?page=03_📊_Data_Visualization" class="card">
         <div class="card-icon">📊</div>
-        <div class="card-title">Step-3: Visualize Data</div>
-        <div class="card-desc">Generate interactive charts & correlations</div>
+        <div class="card-title">Step-3: Epi Visualizations</div>
+        <div class="card-desc">Pyramids, epi curves, survival plots & heat maps</div>
     </a>
     <a href="?page=04_🤖_Modeling_and_Evaluation" class="card">
         <div class="card-icon">🤖</div>
-        <div class="card-title">Step-4: Modeling</div>
-        <div class="card-desc">Train ML models & pick the best one</div>
+        <div class="card-title">Step-4: ML Models</div>
+        <div class="card-desc">Predictive modeling with XGBoost, Random Forest & more</div>
+    </a>
+    <a href="?page=04b_🏥_Epidemiological_Models" class="card">
+        <div class="card-icon">🏥</div>
+        <div class="card-title">Step-4b: Epi Models</div>
+        <div class="card-desc">Cox, Kaplan-Meier, Poisson, OR/RR/HR analysis</div>
     </a>
     <a href="?page=05_📑_Report" class="card">
         <div class="card-icon">📑</div>
         <div class="card-title">Step-5: Report</div>
-        <div class="card-desc">Download automated PDF reports with insights</div>
+        <div class="card-desc">Generate professional epidemiological reports</div>
     </a>
 </div>
 """

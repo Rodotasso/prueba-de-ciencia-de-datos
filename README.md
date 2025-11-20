@@ -1,60 +1,81 @@
 ---
-title: AI Data Scientist Agent
-emoji: 📊
+title: AI Epidemiology & Public Health Agent
+emoji: 🏥
 sdk: streamlit
 app_file: app.py
 pinned: false
 license: mit
 sdk_version: 1.49.1
+tags:
+- epidemiology
+- public-health
+- biostatistics
+- survival-analysis
+- data-science
 ---
 
-# 🤖 AI Data Scientist Agent
+# 🏥 AI Epidemiology & Public Health Agent
 
-[![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/open-in-hf-spaces-lg.svg)](https://huggingface.co/spaces/Sanchay3011/ai-ds-agent)
+[![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/open-in-hf-spaces-lg.svg)](https://huggingface.co/spaces/Tassdreams/Data_Science_)
 
-Un **Agente de Ciencia de Datos potenciado por IA** que automatiza todo el flujo de trabajo de análisis de datos:
+Un **Agente de Análisis Epidemiológico y Salud Pública potenciado por IA** especializado en investigación de nivel doctoral. Automatiza análisis bioestadísticos avanzados, modelos epidemiológicos y visualizaciones de salud pública.
 
-## ✨ Características Principales
+## ✨ Características Especializadas en Epidemiología
 
-### 📂 **Carga Multi-Formato**
+### 🏥 **Modelos Epidemiológicos Avanzados**
+- ✅ **Análisis de Supervivencia**: Kaplan-Meier, curvas de supervivencia estratificadas, log-rank test
+- ✅ **Cox Proportional Hazards**: Hazard ratios (HR) con IC 95%, forest plots, índice de concordancia
+- ✅ **Regresión de Poisson**: Modelado de tasas de incidencia, Incidence Rate Ratios (IRR)
+- ✅ **Odds Ratios**: Regresión logística para estudios caso-control, IC 95%
+- ✅ **Risk Ratios (RR)**: Riesgo relativo, riesgo atribuible, PAR (Population Attributable Risk)
+- ✅ **Standardized Mortality Ratio (SMR)**: Análisis de mortalidad estandarizada por estratos
+- ✅ **Curvas Epidémicas**: Análisis de brotes, identificación de patrones de transmisión
+
+### 📊 **Visualizaciones Epidemiológicas**
+- ✅ **Pirámides Poblacionales**: Distribución por edad y sexo
+- ✅ **Forest Plots**: Hazard ratios y odds ratios con intervalos de confianza
+- ✅ **Curvas de Kaplan-Meier**: Análisis visual de supervivencia con censura
+- ✅ **Epi Curves**: Visualización temporal de casos con medias móviles
+- ✅ **Mapas de Calor Geográficos**: Incidencia y prevalencia por región
+- ✅ **Tablas 2x2**: Análisis de asociación exposición-resultado
+- ✅ **Tasas Ajustadas por Edad**: Estandarización demográfica
+
+### 📈 **Métricas de Salud Pública**
+- ✅ **Medidas de Frecuencia**: Incidencia, prevalencia, tasas de mortalidad
+- ✅ **Medidas de Asociación**: OR, RR, HR, IRR con intervalos de confianza
+- ✅ **Medidas de Impacto**: Riesgo atribuible, PAR%, fracción prevenible
+- ✅ **Pruebas de Hipótesis**: Chi-cuadrado, log-rank, pruebas de proporcionalidad
+- ✅ **Modelado GLM**: Familia Poisson y Binomial para datos de conteo
+
+### 📂 **Gestión de Datos Epidemiológicos**
 - ✅ Soporte para múltiples archivos simultáneos
 - ✅ Formatos: CSV, Excel (.xlsx, .xls), JSON, Parquet
-- ✅ Manejo automático de codificación
-- ✅ Selector de datasets activos
+- ✅ Manejo de datos censurados y tiempo-hasta-evento
+- ✅ Identificación automática de covariables y estratos
 
-### 🧹 **Limpieza Avanzada de Datos**
-- ✅ Eliminación de duplicados y valores nulos
-- ✅ Imputación inteligente (media, mediana, moda, interpolación)
-- ✅ Detección automática de outliers (IQR y Z-score)
-- ✅ Transformación de tipos de datos
-- ✅ Estandarización de nombres de columnas
+### 🧹 **Limpieza de Datos Biomédicos**
+- ✅ Imputación inteligente para datos clínicos
+- ✅ Detección de outliers biológicamente implausibles (IQR, Z-score)
+- ✅ Transformación de variables epidemiológicas
+- ✅ Codificación de variables categóricas diagnósticas
 
-### 📊 **Visualización Interactiva**
-- ✅ Gráficos interactivos con Plotly
-- ✅ Histogramas, box plots, violin plots
-- ✅ Scatter plots con líneas de tendencia
-- ✅ Mapas de calor de correlación
-- ✅ Gráficos 3D y coordenadas paralelas
-- ✅ Pair plots y sunburst charts
+### 🤖 **ML para Epidemiología**
+- ✅ **Clasificación**: Predicción de riesgo, diagnóstico, outcomes binarios
+- ✅ **Regresión**: Modelado de variables continuas de salud
+- ✅ **Algoritmos**: Logistic, Random Forest, SVM, XGBoost
+- ✅ Validación cruzada y métricas clínicas (sensibilidad, especificidad, AUC)
 
-### 🤖 **Modelado ML Avanzado**
-- ✅ **Clasificación:** Logistic Regression, Random Forest, SVM, KNN, XGBoost
-- ✅ **Regresión:** Linear, Ridge, Lasso, Random Forest, Gradient Boosting
-- ✅ Validación cruzada automática
-- ✅ Optimización de hiperparámetros (GridSearch)
-- ✅ Estandarización de características
-- ✅ Métricas completas y comparación de modelos
+### 📑 **Reportes Epidemiológicos**
+- ✅ Reportes PDF con estadísticas de salud pública
+- ✅ Tablas de resultados con medidas de asociación
+- ✅ Visualizaciones epidemiológicas integradas
+- ✅ Interpretación clínica y significancia estadística
 
-### 📑 **Reportes Automatizados**
-- ✅ Generación de reportes PDF profesionales
-- ✅ Estadísticas descriptivas
-- ✅ Visualizaciones incluidas
-- ✅ Resumen del mejor modelo
-
-### 💬 **Chatbot IA**
-- ✅ Consultas en lenguaje natural sobre tus datos
-- ✅ Powered by Groq (llama-3.1-8b-instant)
-- ✅ Análisis y respuestas contextuales
+### 💬 **Chatbot Epidemiológico IA**
+- ✅ Consultas especializadas en análisis epidemiológico
+- ✅ Interpretación de resultados bioestadísticos
+- ✅ Recomendaciones de métodos según diseño de estudio
+- ✅ Powered by Groq (llama-3.1-8b-instant) con prompts PhD-level
 
 ---
 

@@ -6,7 +6,7 @@ from langchain_groq import ChatGroq
 load_dotenv()
 
 def chatbot_sidebar():
-    st.sidebar.markdown("## 🤖 Chat with AI Data Scientist!")
+    st.sidebar.markdown("## 🏥 Chat with AI Epidemiologist!")
 
     # Check for API key
     api_key = os.getenv("GROQ_API_KEY")
@@ -59,24 +59,38 @@ def chatbot_sidebar():
                         }
                         
                         prompt = f"""
-You are a professional data scientist. Analyze this DataFrame:
+You are an expert epidemiologist and biostatistician with a PhD in Public Health. Your expertise includes:
+- Advanced epidemiological methods (cohort studies, case-control studies, RCTs)
+- Survival analysis (Kaplan-Meier, Cox proportional hazards)
+- Disease surveillance and outbreak investigation
+- Statistical inference in public health contexts
+- Risk assessment (OR, RR, HR, PAR)
+- Population health metrics (incidence, prevalence, mortality rates)
+
+Analyze this epidemiological/health dataset:
 
 **Dataset Stats:**
-- Rows: {stats['rows']}
-- Columns: {stats['columns']}
+- Observations: {stats['rows']}
+- Variables: {stats['columns']}
 - Missing values: {stats['missing']}
-- Numeric columns: {', '.join(stats['numeric_cols'][:10])}
-- Categorical columns: {', '.join(stats['categorical_cols'][:10])}
+- Quantitative variables: {', '.join(stats['numeric_cols'][:10])}
+- Categorical variables: {', '.join(stats['categorical_cols'][:10])}
 
-**Preview (first 5 rows):**
+**Data Preview (first 5 rows):**
 {df.head(5).to_string()}
 
-**Data types:**
+**Variable types:**
 {df.dtypes.to_string()}
 
-**User question:** {user_input}
+**Research Question:** {user_input}
 
-Provide a clear, concise answer based on the data. If you need to calculate something, describe what should be done.
+Provide a rigorous epidemiological analysis. Include:
+1. Appropriate statistical methods for this question
+2. Key epidemiological considerations (confounders, bias, causality)
+3. Specific metrics or analyses recommended (e.g., incidence rates, survival curves, risk ratios)
+4. Interpretation in public health context
+
+Use doctoral-level technical language and cite relevant epidemiological principles.
 """
 
                         response = llm.invoke(prompt)
