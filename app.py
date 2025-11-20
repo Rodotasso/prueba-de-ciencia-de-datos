@@ -1,275 +1,509 @@
 import streamlit as st
 
-st.set_page_config(page_title="AI Epidemiology & Public Health Agent", page_icon="🏥", layout="wide")
+st.set_page_config(
+    page_title="EpiHealth AI Platform", 
+    page_icon="🏥", 
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# ===== CSS - Diseño Profesional de Salud Pública =====
+# ===== CSS - Diseño Dashboard Médico Moderno =====
 st.markdown("""
     <style>
-    /* Fondo con tema médico profesional */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
     .stApp {
-        background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+        background: #0a0e27;
+        background-image: 
+            radial-gradient(at 47% 33%, hsl(162, 77%, 40%) 0, transparent 59%), 
+            radial-gradient(at 82% 65%, hsl(198, 100%, 50%) 0, transparent 55%);
     }
     
-    /* Header con barra superior */
-    .header-bar {
-        background: linear-gradient(135deg, #2c5f2d 0%, #97cc04 100%);
-        padding: 20px;
-        border-radius: 0 0 15px 15px;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    
-    .main-title {
+    /* Hero Section */
+    .hero-section {
         text-align: center;
-        font-size: 2.8em;
-        color: white;
+        padding: 60px 20px 40px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .hero-badge {
+        display: inline-block;
+        background: rgba(34, 211, 238, 0.1);
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        color: #22d3ee;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-size: 0.85em;
+        font-weight: 500;
+        margin-bottom: 20px;
+        letter-spacing: 0.5px;
+    }
+    
+    .hero-title {
+        font-size: 3.5em;
         font-weight: 700;
-        margin: 0;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #ffffff 0%, #22d3ee 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 20px 0;
+        line-height: 1.2;
     }
     
-    .subtitle {
-        text-align: center;
-        font-size: 1.1em;
-        color: #f0f0f0;
-        margin-top: 10px;
-        font-weight: 300;
+    .hero-subtitle {
+        font-size: 1.2em;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 400;
+        margin: 20px auto;
+        max-width: 700px;
+        line-height: 1.6;
     }
     
-    /* Contenedor de workflow */
-    .workflow-container {
-        max-width: 1200px;
-        margin: 40px auto;
+    /* Process Timeline - Diseño Único */
+    .timeline-container {
+        max-width: 1100px;
+        margin: 60px auto;
         padding: 0 20px;
+        position: relative;
     }
     
-    .workflow-title {
+    .timeline-header {
         text-align: center;
-        font-size: 1.8em;
-        color: #2c5f2d;
+        margin-bottom: 50px;
+    }
+    
+    .timeline-title {
+        font-size: 2em;
+        color: white;
         font-weight: 600;
-        margin-bottom: 30px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin-bottom: 10px;
     }
     
-    /* Grid de tarjetas estilo moderno */
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 20px;
-        margin-top: 20px;
+    .timeline-desc {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1em;
     }
     
-    .step-card {
-        background: white;
-        border-left: 5px solid #2c5f2d;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
+    /* Process Steps - Layout Horizontal */
+    .process-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .process-step {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
     }
     
-    .step-card:hover {
-        transform: translateX(5px);
-        box-shadow: 0 4px 20px rgba(44,95,45,0.15);
-        border-left-color: #97cc04;
-    }
-    
-    .step-card::before {
+    .process-step::before {
         content: '';
         position: absolute;
         top: 0;
+        left: 0;
         right: 0;
-        width: 100px;
-        height: 100px;
-        background: linear-gradient(135deg, transparent 60%, rgba(151,204,4,0.1) 100%);
-        border-radius: 0 12px 0 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #22d3ee, #06b6d4);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
     }
     
-    .step-number {
-        display: inline-block;
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, #2c5f2d, #97cc04);
-        color: white;
+    .process-step:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(34, 211, 238, 0.4);
+        transform: translateX(10px);
+    }
+    
+    .process-step:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .step-icon-wrapper {
+        flex-shrink: 0;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.2));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5em;
+        position: relative;
+    }
+    
+    .step-number-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, #22d3ee, #06b6d4);
         border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-        font-weight: bold;
-        font-size: 1.2em;
-        margin-bottom: 15px;
-        box-shadow: 0 2px 8px rgba(44,95,45,0.3);
-    }
-    
-    .step-title {
-        font-size: 1.3em;
-        font-weight: 600;
-        color: #2c5f2d;
-        margin: 10px 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    .step-icon {
-        font-size: 2em;
-        float: right;
-        margin-top: -35px;
-        opacity: 0.7;
-    }
-    
-    .step-desc {
-        color: #555;
-        font-size: 0.95em;
-        line-height: 1.5;
-        margin-top: 10px;
-    }
-    
-    .step-link {
-        display: inline-block;
-        margin-top: 15px;
-        color: #2c5f2d;
-        font-weight: 600;
-        text-decoration: none;
-        font-size: 0.9em;
-        transition: color 0.3s;
-    }
-    
-    .step-link:hover {
-        color: #97cc04;
-    }
-    
-    /* Botón de inicio con nuevo diseño */
-    .cta-section {
-        text-align: center;
-        margin: 50px auto;
-        padding: 40px;
-        background: white;
-        border-radius: 15px;
-        max-width: 600px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    
-    .cta-button {
-        display: inline-block;
-        background: linear-gradient(135deg, #2c5f2d 0%, #97cc04 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.4em;
         color: white;
-        padding: 18px 45px;
-        border-radius: 8px;
-        font-size: 1.2em;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(34, 211, 238, 0.4);
+    }
+    
+    .step-content {
+        flex: 1;
+    }
+    
+    .step-name {
+        font-size: 1.4em;
+        color: white;
         font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(44,95,45,0.3);
-        border: none;
-        cursor: pointer;
+        margin-bottom: 8px;
     }
     
-    .cta-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(44,95,45,0.4);
+    .step-description {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95em;
+        line-height: 1.6;
+        margin-bottom: 12px;
     }
     
-    /* Badge de características */
-    .features-badge {
-        display: inline-block;
-        background: #e8f5e9;
-        color: #2c5f2d;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.85em;
-        margin: 5px 5px 5px 0;
+    .step-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .tag {
+        background: rgba(34, 211, 238, 0.1);
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        color: #22d3ee;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 0.8em;
         font-weight: 500;
+    }
+    
+    .step-action {
+        flex-shrink: 0;
+        width: 120px;
+        text-align: center;
+    }
+    
+    .action-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #22d3ee, #06b6d4);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9em;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px rgba(34, 211, 238, 0.3);
+    }
+    
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(34, 211, 238, 0.5);
+    }
+    
+    /* CTA Section - Diseño Único */
+    .cta-wrapper {
+        max-width: 800px;
+        margin: 80px auto 60px;
+        padding: 0 20px;
+    }
+    
+    .cta-card {
+        background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        border-radius: 20px;
+        padding: 50px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .cta-heading {
+        font-size: 2em;
+        color: white;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .cta-text {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.1em;
+        margin-bottom: 35px;
+    }
+    
+    .cta-main-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #22d3ee, #06b6d4);
+        color: white;
+        padding: 18px 50px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.15em;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(34, 211, 238, 0.4);
+    }
+    
+    .cta-main-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(34, 211, 238, 0.6);
+    }
+    
+    /* Features Grid */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .feature-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .feature-box:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(34, 211, 238, 0.3);
+    }
+    
+    .feature-icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+    }
+    
+    .feature-title {
+        color: white;
+        font-size: 1.1em;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .feature-text {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9em;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.2em; }
+        .process-step { flex-direction: column; text-align: center; }
+        .step-action { width: 100%; }
     }
     </style>
 """, unsafe_allow_html=True)
 
-# ===== Header =====
+# ===== Hero Section =====
 st.markdown("""
-<div class="header-bar">
-    <h1 class="main-title">🏥 AI Epidemiology & Public Health Agent</h1>
-    <p class="subtitle">Advanced Biostatistical Analysis & Epidemiological Modeling for Doctoral Research</p>
+<div class="hero-section">
+    <div class="hero-badge">🏥 DOCTORAL-LEVEL PLATFORM</div>
+    <h1 class="hero-title">EpiHealth AI Platform</h1>
+    <p class="hero-subtitle">
+        Advanced biostatistical analysis and epidemiological modeling powered by artificial intelligence. 
+        From data ingestion to publication-ready insights.
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
-# ===== Workflow Section =====
-st.markdown('<h2 class="workflow-title">📋 Analysis Workflow</h2>', unsafe_allow_html=True)
+# ===== Features Grid =====
+st.markdown("""
+<div class="features-grid">
+    <div class="feature-box">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Lightning Fast</div>
+        <div class="feature-text">Process millions of records in seconds</div>
+    </div>
+    <div class="feature-box">
+        <div class="feature-icon">🔬</div>
+        <div class="feature-title">PhD-Level Analysis</div>
+        <div class="feature-text">Cox, Kaplan-Meier, Poisson regression</div>
+    </div>
+    <div class="feature-box">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title">AI-Powered</div>
+        <div class="feature-text">Smart insights with Groq LLM</div>
+    </div>
+    <div class="feature-box">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Interactive Viz</div>
+        <div class="feature-text">Forest plots, survival curves, pyramids</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-workflow_html = """
-<div class="workflow-container">
-    <div class="cards-grid">
-        <div class="step-card">
-            <span class="step-number">1</span>
-            <span class="step-icon">📂</span>
-            <h3 class="step-title">Upload Data</h3>
-            <p class="step-desc">Load epidemiological datasets in multiple formats: CSV, Excel, JSON, Parquet. Handle multiple files simultaneously.</p>
-            <span class="features-badge">Multi-format</span>
-            <span class="features-badge">Batch upload</span>
-            <a href="?page=01_📂_Upload_and_Schema" class="step-link">Start uploading →</a>
+# ===== Process Timeline =====
+st.markdown("""
+<div class="timeline-container">
+    <div class="timeline-header">
+        <h2 class="timeline-title">Complete Analysis Pipeline</h2>
+        <p class="timeline-desc">6-step workflow from raw data to publication-ready results</p>
+    </div>
+    
+    <div class="process-steps">
+        <div class="process-step">
+            <div class="step-icon-wrapper">
+                <span>📂</span>
+                <div class="step-number-badge">1</div>
+            </div>
+            <div class="step-content">
+                <div class="step-name">Data Ingestion</div>
+                <div class="step-description">
+                    Load multiple epidemiological datasets simultaneously. Support for CSV, Excel, JSON, and Parquet formats with automatic encoding detection.
+                </div>
+                <div class="step-tags">
+                    <span class="tag">Multi-format</span>
+                    <span class="tag">Batch processing</span>
+                    <span class="tag">Auto-detect</span>
+                </div>
+            </div>
+            <div class="step-action">
+                <a href="?page=01_📂_Upload_and_Schema" class="action-button">Upload</a>
+            </div>
         </div>
         
-        <div class="step-card">
-            <span class="step-number">2</span>
-            <span class="step-icon">🧹</span>
-            <h3 class="step-title">Data Cleaning</h3>
-            <p class="step-desc">Handle missing values, outliers detection (IQR, Z-score), smart imputation, and data quality assessment.</p>
-            <span class="features-badge">Outlier detection</span>
-            <span class="features-badge">Smart imputation</span>
-            <a href="?page=02_🧹_Clean_Data" class="step-link">Clean data →</a>
+        <div class="process-step">
+            <div class="step-icon-wrapper">
+                <span>🧹</span>
+                <div class="step-number-badge">2</div>
+            </div>
+            <div class="step-content">
+                <div class="step-name">Data Preprocessing</div>
+                <div class="step-description">
+                    Advanced cleaning pipeline with outlier detection (IQR, Z-score), intelligent imputation, and quality assessment metrics.
+                </div>
+                <div class="step-tags">
+                    <span class="tag">IQR detection</span>
+                    <span class="tag">Smart impute</span>
+                    <span class="tag">QC metrics</span>
+                </div>
+            </div>
+            <div class="step-action">
+                <a href="?page=02_🧹_Clean_Data" class="action-button">Clean</a>
+            </div>
         </div>
         
-        <div class="step-card">
-            <span class="step-number">3</span>
-            <span class="step-icon">📊</span>
-            <h3 class="step-title">Epi Visualizations</h3>
-            <p class="step-desc">Population pyramids, epidemic curves, survival plots, geographic heat maps, and advanced epidemiological charts.</p>
-            <span class="features-badge">Kaplan-Meier</span>
-            <span class="features-badge">Epi curves</span>
-            <a href="?page=03_📊_Data_Visualization" class="step-link">Visualize →</a>
+        <div class="process-step">
+            <div class="step-icon-wrapper">
+                <span>📊</span>
+                <div class="step-number-badge">3</div>
+            </div>
+            <div class="step-content">
+                <div class="step-name">Epidemiological Visualization</div>
+                <div class="step-description">
+                    Generate population pyramids, epidemic curves, survival plots, heat maps, and interactive dashboards for exploratory analysis.
+                </div>
+                <div class="step-tags">
+                    <span class="tag">Plotly</span>
+                    <span class="tag">Kaplan-Meier</span>
+                    <span class="tag">Epi curves</span>
+                </div>
+            </div>
+            <div class="step-action">
+                <a href="?page=03_📊_Data_Visualization" class="action-button">Explore</a>
+            </div>
         </div>
         
-        <div class="step-card">
-            <span class="step-number">4</span>
-            <span class="step-icon">🤖</span>
-            <h3 class="step-title">ML Predictive Models</h3>
-            <p class="step-desc">Train and evaluate machine learning models: XGBoost, Random Forest, SVM with cross-validation and hyperparameter tuning.</p>
-            <span class="features-badge">15 algorithms</span>
-            <span class="features-badge">Auto-tuning</span>
-            <a href="?page=04_🤖_Modeling_and_Evaluation" class="step-link">Build models →</a>
+        <div class="process-step">
+            <div class="step-icon-wrapper">
+                <span>🤖</span>
+                <div class="step-number-badge">4</div>
+            </div>
+            <div class="step-content">
+                <div class="step-name">Machine Learning Models</div>
+                <div class="step-description">
+                    Train 15+ ML algorithms including XGBoost, Random Forest, and SVM. Automated hyperparameter tuning and cross-validation.
+                </div>
+                <div class="step-tags">
+                    <span class="tag">XGBoost</span>
+                    <span class="tag">GridSearch</span>
+                    <span class="tag">CV</span>
+                </div>
+            </div>
+            <div class="step-action">
+                <a href="?page=04_🤖_Modeling_and_Evaluation" class="action-button">Train</a>
+            </div>
         </div>
         
-        <div class="step-card">
-            <span class="step-number">5</span>
-            <span class="step-icon">🏥</span>
-            <h3 class="step-title">Epidemiological Models</h3>
-            <p class="step-desc">Cox Proportional Hazards, Kaplan-Meier survival analysis, Poisson regression, OR/RR/HR calculations, SMR analysis.</p>
-            <span class="features-badge">Survival analysis</span>
-            <span class="features-badge">Cox PH</span>
-            <a href="?page=04b_🏥_Epidemiological_Models" class="step-link">Analyze →</a>
+        <div class="process-step">
+            <div class="step-icon-wrapper">
+                <span>🏥</span>
+                <div class="step-number-badge">5</div>
+            </div>
+            <div class="step-content">
+                <div class="step-name">Biostatistical Analysis</div>
+                <div class="step-description">
+                    Cox proportional hazards, survival analysis, Poisson regression for rates, OR/RR/HR calculations with 95% CI and forest plots.
+                </div>
+                <div class="step-tags">
+                    <span class="tag">Cox PH</span>
+                    <span class="tag">Survival</span>
+                    <span class="tag">Poisson</span>
+                </div>
+            </div>
+            <div class="step-action">
+                <a href="?page=04b_🏥_Epidemiological_Models" class="action-button">Analyze</a>
+            </div>
         </div>
         
-        <div class="step-card">
-            <span class="step-number">6</span>
-            <span class="step-icon">📑</span>
-            <h3 class="step-title">Generate Reports</h3>
-            <p class="step-desc">Create professional epidemiological reports with statistics, visualizations, and model results in PDF or HTML format.</p>
-            <span class="features-badge">PDF export</span>
-            <span class="features-badge">HTML reports</span>
-            <a href="?page=05_📑_Report" class="step-link">Create report →</a>
+        <div class="process-step">
+            <div class="step-icon-wrapper">
+                <span>📑</span>
+                <div class="step-number-badge">6</div>
+            </div>
+            <div class="step-content">
+                <div class="step-name">Report Generation</div>
+                <div class="step-description">
+                    Export publication-ready reports with comprehensive statistics, visualizations, and model performance metrics in PDF or HTML.
+                </div>
+                <div class="step-tags">
+                    <span class="tag">PDF</span>
+                    <span class="tag">HTML</span>
+                    <span class="tag">Charts</span>
+                </div>
+            </div>
+            <div class="step-action">
+                <a href="?page=05_📑_Report" class="action-button">Export</a>
+            </div>
         </div>
     </div>
 </div>
-"""
-
-st.markdown(workflow_html, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # ===== CTA Section =====
 st.markdown("""
-<div class="cta-section">
-    <h3 style="color: #2c5f2d; margin-bottom: 15px;">Ready to analyze your epidemiological data?</h3>
-    <p style="color: #666; margin-bottom: 25px;">Start with uploading your dataset and let AI guide you through the analysis</p>
-    <a href="?page=01_📂_Upload_and_Schema" class="cta-button">🚀 Begin Analysis</a>
+<div class="cta-wrapper">
+    <div class="cta-card">
+        <h2 class="cta-heading">Ready to Transform Your Research?</h2>
+        <p class="cta-text">
+            Start analyzing your epidemiological data with cutting-edge AI tools and biostatistical methods
+        </p>
+        <a href="?page=01_📂_Upload_and_Schema" class="cta-main-button">
+            🚀 Launch Platform
+        </a>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
