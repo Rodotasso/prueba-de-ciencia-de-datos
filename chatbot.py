@@ -3,13 +3,17 @@ import streamlit as st
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 
+# Load .env only if running locally (HF Spaces uses secrets)
 load_dotenv()
 
 def chatbot_sidebar():
     st.sidebar.markdown("## 🏥 Chat with AI Epidemiologist!")
 
-    # Check for API key
-    api_key = os.getenv("GROQ_API_KEY")
+    # Check for API key in multiple sources (HF Spaces secrets, env vars, or streamlit secrets)
+    api_key = (
+        os.getenv("GROQ_API_KEY") or 
+        st.secrets.get("GROQ_API_KEY", None) if hasattr(st, 'secrets') and st.secrets else None
+    )
     if not api_key:
         st.sidebar.error("⚠️ GROQ_API_KEY not found!")
         st.sidebar.info("📝 Add your API key to .env file. See .env.example for template.")

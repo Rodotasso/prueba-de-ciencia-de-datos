@@ -88,7 +88,7 @@ Un **Agente de Análisis Epidemiológico y Salud Pública potenciado por IA** es
 - Genera tu API key gratuita
 - Tier gratuito: ~14,000 tokens/minuto (más que suficiente)
 
-### 2️⃣ Instalación
+### 2️⃣ Instalación Local
 
 ```bash
 # Clonar el repositorio
@@ -98,18 +98,38 @@ cd ai-ds-agent
 # Instalar dependencias
 pip install -r requirements.txt
 
-# Configurar API key
+# Configurar API key (opción 1: .env)
 cp .env.example .env
 # Editar .env y agregar tu GROQ_API_KEY
+
+# O configurar API key (opción 2: Streamlit secrets)
+mkdir -p .streamlit
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+# Editar secrets.toml y agregar tu GROQ_API_KEY
 ```
 
-### 3️⃣ Ejecutar
+### 3️⃣ Ejecutar Localmente
 
 ```bash
 streamlit run app.py
 ```
 
 La aplicación se abrirá en `http://localhost:8501`
+
+### 4️⃣ Desplegar en Hugging Face Spaces
+
+1. **Fork o crea un nuevo Space** en [huggingface.co/spaces](https://huggingface.co/spaces)
+2. **Configura el secret de la API:**
+   - Ve a Settings ⚙️ de tu Space
+   - Scroll a "Repository secrets"
+   - Click "New secret"
+   - Name: `GROQ_API_KEY`
+   - Value: Tu API key de Groq
+   - Click "Add secret"
+3. **Push tu código** al Space
+4. **Espera 2-3 minutos** para que se construya
+
+> 📖 **Guía detallada**: Ver [HF_SECRETS_SETUP.md](./HF_SECRETS_SETUP.md) para troubleshooting
 
 ---
 
