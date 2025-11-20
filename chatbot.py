@@ -51,7 +51,7 @@ def chatbot_sidebar():
         
         if st.sidebar.button("🚀 Send", use_container_width=True):
             if user_input.strip():
-                with st.sidebar.spinner("🤔 Thinking..."):
+                with st.spinner("🤔 Thinking..."):
                     try:
                         # Get basic stats
                         stats = {
