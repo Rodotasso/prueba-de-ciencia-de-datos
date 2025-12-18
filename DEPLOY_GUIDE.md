@@ -1,8 +1,8 @@
-# 🚀 Deploy en Hugging Face Spaces
+# Deploy en Hugging Face Spaces
 
 Esta guía te ayudará a deployar tu aplicación en Hugging Face Spaces en minutos.
 
-## ✅ Pre-requisitos
+## Pre-requisitos
 
 1. Cuenta en [Hugging Face](https://huggingface.co) (gratis)
 2. Cuenta en [Groq](https://console.groq.com) con API key (gratis)
@@ -10,7 +10,7 @@ Esta guía te ayudará a deployar tu aplicación en Hugging Face Spaces en minut
 
 ---
 
-## 📝 Método 1: Sincronización con GitHub (Recomendado)
+## Método 1: Sincronización con GitHub (Recomendado)
 
 ### Paso 1: Subir a GitHub
 
@@ -35,8 +35,8 @@ git push -u origin main
    - **Owner:** Tu usuario
    - **Space name:** `ai-ds-agent` (o el que prefieras)
    - **License:** MIT
-   - **Select the Space SDK:** Streamlit ⭐
-   - **Space hardware:** CPU basic - Free! ✅
+   - **Select the Space SDK:** Streamlit
+   - **Space hardware:** CPU basic - Free!
    - **Repo type:** Public (o Private si prefieres)
 
 3. Click **"Create Space"**
@@ -48,11 +48,11 @@ git push -u origin main
 3. Click **"Link to GitHub"**
 4. Autoriza Hugging Face
 5. Selecciona tu repositorio `ai-ds-agent`
-6. ✅ Listo! Ahora cada push a GitHub actualizará tu Space automáticamente
+6. Listo! Ahora cada push a GitHub actualizará tu Space automáticamente
 
 ### Paso 4: Configurar API Key (IMPORTANTE)
 
-**⚠️ NUNCA subas tu API key al código público**
+**NUNCA subas tu API key al código público**
 
 1. En tu Space, ve a **Settings**
 2. Scroll hasta **"Repository secrets"**
@@ -78,7 +78,7 @@ https://huggingface.co/spaces/tu-usuario/ai-ds-agent
 
 ---
 
-## 📝 Método 2: Subida Directa (Sin GitHub)
+## Método 2: Subida Directa (Sin GitHub)
 
 ### Paso 1: Crear Space
 
@@ -122,7 +122,7 @@ Antes de hacer deploy, verifica que tu repositorio tenga:
 - [x] `.gitignore` - Para no subir archivos innecesarios
 - [x] `.env.example` - Plantilla (NO subir .env real)
 
-### ✅ Metadata en README.md:
+### Metadata en README.md:
 El README.md debe tener este header (ya lo tienes):
 ```yaml
 ---
@@ -136,12 +136,12 @@ sdk_version: 1.49.1
 ---
 ```
 
-### ✅ requirements.txt actualizado:
+### requirements.txt actualizado:
 Verifica que incluya todas las dependencias (ya está completo).
 
 ---
 
-## 🚨 Problemas Comunes y Soluciones
+## Problemas Comunes y Soluciones
 
 ### Error: "Application error"
 **Causa:** Falta GROQ_API_KEY
@@ -165,7 +165,7 @@ Verifica que incluya todas las dependencias (ya está completo).
 
 ---
 
-## 🔄 Actualización Continua
+## Actualización Continua
 
 ### Con GitHub conectado:
 ```bash
@@ -187,7 +187,7 @@ git push
 
 ---
 
-## 🌐 Compartir tu App
+## Compartir tu App
 
 Una vez deployada, comparte:
 ```
@@ -201,17 +201,17 @@ https://huggingface.co/spaces/tu-usuario/ai-ds-agent
 
 ---
 
-## 📊 Monitoreo
+## Monitoreo
 
 En tu Space dashboard puedes ver:
-- ✅ Usuarios activos
-- ✅ Logs en tiempo real
-- ✅ Uso de recursos
-- ✅ Historial de builds
+- Usuarios activos
+- Logs en tiempo real
+- Uso de recursos
+- Historial de builds
 
 ---
 
-## 💡 Tips
+## Tips
 
 1. **Desarrollo local primero:** Prueba todo localmente antes de deployar
 2. **Commits descriptivos:** Facilita debug si algo falla
@@ -221,7 +221,7 @@ En tu Space dashboard puedes ver:
 
 ---
 
-## 🎯 Checklist Final
+## Checklist Final
 
 Antes de deployar, verifica:
 
@@ -236,7 +236,7 @@ Antes de deployar, verifica:
 
 ---
 
-## 🆘 Ayuda
+## Ayuda
 
 Si tienes problemas:
 
@@ -247,7 +247,7 @@ Si tienes problemas:
 
 ---
 
-## ✨ Próximos Pasos
+## Próximos Pasos
 
 Después del primer deploy:
 
@@ -259,6 +259,6 @@ Después del primer deploy:
 
 ---
 
-¡Buena suerte con tu deploy! 🚀
+¡Buena suerte con tu deploy!
 
-**Recuerda:** Todo es GRATIS (Groq API + Hugging Face Spaces CPU básico) 💰✅
+**Recuerda:** Todo es GRATIS (Groq API + Hugging Face Spaces CPU básico)

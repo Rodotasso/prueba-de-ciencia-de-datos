@@ -1,8 +1,8 @@
-# 🚀 Quick Start - AI Data Scientist Agent
+# Quick Start - AI Data Scientist Agent
 
-## ⚡ 3 Pasos para Empezar
+## 3 Pasos para Empezar
 
-### 1️⃣ Instalar (2 minutos)
+### 1. Instalar (2 minutos)
 
 **Windows:**
 ```powershell
@@ -15,7 +15,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-### 2️⃣ Configurar API Key (1 minuto)
+### 2. Configurar API Key (1 minuto)
 
 1. Ve a: https://console.groq.com
 2. Registrate (gratis)
@@ -25,7 +25,7 @@ chmod +x setup.sh
    GROQ_API_KEY=gsk_tu_key_aqui
    ```
 
-### 3️⃣ Ejecutar (30 segundos)
+### 3. Ejecutar (30 segundos)
 
 ```bash
 streamlit run app.py
@@ -35,7 +35,7 @@ streamlit run app.py
 
 ---
 
-## 🌐 Deploy en Hugging Face (5 minutos)
+## Deploy en Hugging Face (5 minutos)
 
 ### Opción A: Con GitHub (Recomendado)
 
@@ -73,7 +73,7 @@ git push
 
 ---
 
-## 📚 Documentación Completa
+## Documentación Completa
 
 - **README.md** - Descripción completa y features
 - **INSTALLATION.md** - Guía detallada de instalación
@@ -83,21 +83,21 @@ git push
 
 ---
 
-## 🎯 Características Principales
+## Características Principales
 
-✅ **Multi-formato:** CSV, Excel, JSON, Parquet  
-✅ **Limpieza avanzada:** Outliers, imputación, transformaciones  
-✅ **Visualizaciones:** 15+ gráficos interactivos con Plotly  
-✅ **15 Algoritmos ML:** XGBoost, Random Forest, SVM, etc.  
-✅ **Validación cruzada** y optimización de hiperparámetros  
-✅ **Reportes PDF/HTML** profesionales  
-✅ **Chatbot IA** con Groq (gratis)  
+**Multi-formato:** CSV, Excel, JSON, Parquet
+**Limpieza avanzada:** Outliers, imputación, transformaciones
+**Visualizaciones:** 15+ gráficos interactivos con Plotly
+**15 Algoritmos ML:** XGBoost, Random Forest, SVM, etc.
+**Validación cruzada** y optimización de hiperparámetros
+**Reportes PDF/HTML** profesionales
+**Chatbot IA** con Groq (gratis)
 
 ---
 
-## 💰 Costos
+## Costos
 
-**Total: $0/mes** 🎉
+**Total: $0/mes**
 
 - Groq API: Gratis (14K tokens/min)
 - Hugging Face Spaces: Gratis (CPU básico)

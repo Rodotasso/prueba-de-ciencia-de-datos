@@ -1,6 +1,6 @@
-# 🚀 Guía de Instalación y Uso - AI Data Scientist Agent
+# Guía de Instalación y Uso - AI Data Scientist Agent
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 ### 1. Software Necesario
 - **Python 3.8 o superior** - [Descargar aquí](https://www.python.org/downloads/)
@@ -17,15 +17,15 @@ El chatbot de IA requiere una API key de Groq. Es **completamente gratuita** con
 5. Copia tu key (empieza con `gsk_...`)
 
 **Plan Gratuito incluye:**
-- ✅ ~14,000 tokens por minuto
-- ✅ Acceso al modelo llama-3.1-8b-instant
-- ✅ Respuestas ultra-rápidas (milisegundos)
-- ✅ Sin límite de tiempo
-- ✅ Sin tarjeta de crédito requerida
+- ~14,000 tokens por minuto
+- Acceso al modelo llama-3.1-8b-instant
+- Respuestas ultra-rápidas (milisegundos)
+- Sin límite de tiempo
+- Sin tarjeta de crédito requerida
 
 ---
 
-## 🔧 Instalación
+## Instalación
 
 ### Opción 1: Instalación Local
 
@@ -89,11 +89,11 @@ Accede a `http://localhost:8501`
 
 ---
 
-## 📚 Cómo Usar la Aplicación
+## Cómo Usar la Aplicación
 
 ### Flujo Completo de Trabajo
 
-#### 1️⃣ Cargar Datos
+#### 1. Cargar Datos
 - Click en la pestaña "Upload & Schema"
 - Arrastra o selecciona tus archivos
 - Formatos soportados: CSV, Excel, JSON, Parquet
@@ -101,7 +101,7 @@ Accede a `http://localhost:8501`
 
 **Tip:** Si tienes varios datasets, selecciona cuál será el activo para análisis.
 
-#### 2️⃣ Limpiar Datos
+#### 2. Limpiar Datos
 - Navega a "Clean Data"
 - Opciones disponibles:
   - **Remove Data:** Eliminar duplicados, filas vacías, columnas
@@ -111,7 +111,7 @@ Accede a `http://localhost:8501`
 
 **Importante:** Click en "Save Cleaned Dataset" para aplicar cambios.
 
-#### 3️⃣ Visualizar
+#### 3. Visualizar
 - Ir a "Data Visualization"
 - 5 categorías de visualizaciones:
   - **Distribution:** Histogramas, box plots, violin plots
@@ -122,7 +122,7 @@ Accede a `http://localhost:8501`
 
 **Tip:** Todos los gráficos son interactivos - haz zoom, pan, exporta imágenes.
 
-#### 4️⃣ Entrenar Modelos
+#### 4. Entrenar Modelos
 - Accede a "Modeling and Evaluation"
 - Configuración:
   1. Selecciona la columna objetivo (target)
@@ -135,9 +135,9 @@ Accede a `http://localhost:8501`
 - **Regresión:** Linear, Ridge, Lasso, Random Forest, SVM, KNN, XGBoost, Gradient Boosting
 
 **Opciones avanzadas:**
-- ✅ Estandarización de características
-- ✅ Validación cruzada (3-10 folds)
-- ✅ Optimización de hiperparámetros (GridSearch)
+- Estandarización de características
+- Validación cruzada (3-10 folds)
+- Optimización de hiperparámetros (GridSearch)
 
 **Resultados mostrados:**
 - Tabla comparativa de métricas
@@ -146,7 +146,7 @@ Accede a `http://localhost:8501`
 - Gráfico actual vs predicho (regresión)
 - Comparación visual entre modelos
 
-#### 5️⃣ Generar Reportes
+#### 5. Generar Reportes
 - Ve a "Report"
 - Configura:
   - Título del reporte
@@ -163,7 +163,7 @@ Accede a `http://localhost:8501`
 - Visualizaciones clave
 - Resultados de modelos
 
-#### 6️⃣ Usar el Chatbot
+#### 6. Usar el Chatbot
 - Abre el sidebar (>> arriba a la izquierda)
 - Haz preguntas sobre tus datos en lenguaje natural
 - Ejemplos:
@@ -174,7 +174,7 @@ Accede a `http://localhost:8501`
 
 ---
 
-## 🎯 Ejemplos de Uso
+## Ejemplos de Uso
 
 ### Ejemplo 1: Análisis de Ventas
 1. Cargar `sales_data.csv`
@@ -198,7 +198,7 @@ Accede a `http://localhost:8501`
 
 ---
 
-## ⚠️ Solución de Problemas
+## Solución de Problemas
 
 ### Error: "GROQ_API_KEY not found"
 - **Solución:** Verifica que el archivo `.env` existe y contiene tu API key
@@ -227,7 +227,7 @@ Accede a `http://localhost:8501`
 
 ---
 
-## 📊 Límites y Consideraciones
+## Límites y Consideraciones
 
 ### Tamaño de Datos
 - **Recomendado:** < 100MB por archivo
@@ -247,38 +247,38 @@ Accede a `http://localhost:8501`
 
 ---
 
-## 🔐 Seguridad
+## Seguridad
 
 ### Datos
-- ✅ Todo se procesa localmente
-- ✅ Nada se guarda en servidores
-- ✅ Session state de Streamlit (temporal)
-- ❌ No se suben datos a la nube
+- Todo se procesa localmente
+- Nada se guarda en servidores
+- Session state de Streamlit (temporal)
+- No se suben datos a la nube
 
 ### API Key
-- ⚠️ Nunca compartas tu GROQ_API_KEY
-- ⚠️ No la subas a GitHub
-- ✅ Usa `.env` (está en .gitignore)
-- ✅ Regenera si se compromete
+- Nunca compartas tu GROQ_API_KEY
+- No la subas a GitHub
+- Usa `.env` (está en .gitignore)
+- Regenera si se compromete
 
 ---
 
-## 🆘 Soporte
+## Soporte
 
 ### Recursos
-- 📖 **Documentación:** Este README
-- 🐛 **Bugs:** Abre un issue en GitHub
-- 💡 **Sugerencias:** Pull requests bienvenidos
-- 💬 **Preguntas:** Usa el chatbot o issues
+- **Documentación:** Este README
+- **Bugs:** Abre un issue en GitHub
+- **Sugerencias:** Pull requests bienvenidos
+- **Preguntas:** Usa el chatbot o issues
 
 ### Comunidad
-- ⭐ Dale star al repo si te gusta
-- 🔀 Fork para tus propios proyectos
-- 📢 Comparte tus casos de uso
+- Dale star al repo si te gusta
+- Fork para tus propios proyectos
+- Comparte tus casos de uso
 
 ---
 
-## 🎓 Próximos Pasos
+## Próximos Pasos
 
 Una vez familiarizado con la app:
 1. **Experimenta** con diferentes datasets
@@ -289,4 +289,4 @@ Una vez familiarizado con la app:
 
 ---
 
-¡Disfruta explorando tus datos con IA! 🚀📊
+¡Disfruta explorando tus datos con IA!

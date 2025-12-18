@@ -1,8 +1,8 @@
-# 🎯 Checklist Pre-Deploy - Hugging Face Spaces
+# Checklist Pre-Deploy - Hugging Face Spaces
 
 Use esta checklist antes de hacer deploy para asegurar que todo funcione correctamente.
 
-## ✅ Archivos Esenciales
+## Archivos Esenciales
 
 - [x] `app.py` - Archivo principal de entrada
 - [x] `requirements.txt` - Todas las dependencias listadas
@@ -14,7 +14,7 @@ Use esta checklist antes de hacer deploy para asegurar que todo funcione correct
 - [x] `LICENSE` - Archivo de licencia MIT
 - [x] `.streamlit/config.toml` - Configuración de Streamlit
 
-## ✅ Metadata en README.md
+## Metadata en README.md
 
 Verifica que el README.md tenga este header al inicio:
 
@@ -30,14 +30,14 @@ sdk_version: 1.49.1
 ---
 ```
 
-## ✅ Configuración de Seguridad
+## Configuración de Seguridad
 
 - [ ] Archivo `.env` **NO** está en el repositorio (debe estar en .gitignore)
 - [ ] API key de Groq obtenida de https://console.groq.com
 - [ ] `.env.example` tiene el formato correcto pero sin la key real
 - [ ] No hay API keys hardcodeadas en ningún archivo .py
 
-## ✅ Dependencias
+## Dependencias
 
 Verifica que `requirements.txt` incluya:
 
@@ -57,7 +57,7 @@ Verifica que `requirements.txt` incluya:
 - [x] openpyxl
 - [x] pyarrow
 
-## ✅ Estructura de Páginas
+## Estructura de Páginas
 
 Verifica que `pages/` contenga:
 
@@ -67,7 +67,7 @@ Verifica que `pages/` contenga:
 - [x] `04_🤖_Modeling_and_Evaluation.py`
 - [x] `05_📑_Report.py`
 
-## ✅ Pruebas Locales
+## Pruebas Locales
 
 Antes de deployar, verifica localmente:
 
@@ -79,7 +79,7 @@ Antes de deployar, verifica localmente:
 - [ ] Los reportes se generan (PDF y HTML)
 - [ ] El chatbot responde (con API key configurada)
 
-## ✅ Hugging Face Space
+## Hugging Face Space
 
 Configuración en Hugging Face:
 
@@ -88,7 +88,7 @@ Configuración en Hugging Face:
 - [ ] Repository secret `GROQ_API_KEY` agregado
 - [ ] Código pusheado al Space (vía GitHub o directo)
 
-## ✅ Comandos Git
+## Comandos Git
 
 Si usas GitHub para sincronización:
 
